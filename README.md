@@ -18,7 +18,7 @@ GIMPを使って、字幕ファイル(SubRip形式)から字幕画像を生成�
 
 本ツールは、[GIMP - GNU Image Manipulation Program](https://www.gimp.org/)とそのマクロである[Gimp Python](https://www.gimp.org/docs/python/)を利用しているので、**GIMP**を事前にインストールしてください。
 
-あとは、本プロジェクトを適当なところにクローンしてください。
+最初に、本プロジェクトを適当なところにクローンしてください。
 
 ```shell
 cd ~/work
@@ -26,12 +26,29 @@ git clone https://github.com/kantas-spike/create-subtitle-image-by-gimp.git
 cd create-subtitle-image-by-gimp
 ```
 
+次に、`make install`で本ツールをインストールしてください。
+
+`~/opt/create_subtitle_image-by-gimp`にスクリプト類がインストールされ、
+`~/bin/create-subtitle-image-by-gimp.sh`が作成されます。
+
+```shell
+$ make install
+mkdir -p ~/bin ~/opt/create_subtitle_image-by-gimp/bin ~/opt/create_subtitle_image-by-gimp/lib ~/opt/create_subtitle_image-by-gimp/config
+cp -p default_settings.json ~/opt/create_subtitle_image-by-gimp/config
+cp -p create-subtitle-image-by-gimp.py my_settings.py my_srt.py subtitle_creator.py ~/opt/create_subtitle_image-by-gimp/lib
+cp -p create-subtitle-image-by-gimp.sh ~/opt/create_subtitle_image-by-gimp/bin
+chmod u+x ~/opt/create_subtitle_image-by-gimp/bin/create-subtitle-image-by-gimp.sh
+ln -s ~/opt/create_subtitle_image-by-gimp/bin/create-subtitle-image-by-gimp.sh ~/bin/create-subtitle-image-by-gimp.sh
+```
+
+実行方法は以下になります。
+
 `-h`オプションをつけて以下のシェルを実行し、ヘルプが表示されることを確認してください。
 
 ```shell
 $ pwd
 ~/work/create-subtitle-image-by-gimp
-$ sh ./create-subtitle-image-by-gimp.sh -h
+$ sh ~/bin/create-subtitle-image-by-gimp.sh -h
 usage: create-subtitle-image-by-gimp.py [-h] -s SRT_FILE -c CONFIG_PATH [-o OUTPUT_DIR] [--system-path SYSTEM_PATH] [--default-settings-path DEFAULT_SETTINGS_PATH] [--gimp-path GIMP_PATH]
                                         [--debug]
 
@@ -61,7 +78,7 @@ options:
 以下のように、字幕ファイルのパスと、字幕画像を出力するディレクトリを指定します。
 
 ```sh
-sh ./create-subtitle-image-by-gimp.sh -s 字幕ファイルのパス -c 設定ファイルのパス -o 画像出力先ディレクトリ
+sh ~/bin/create-subtitle-image-by-gimp.sh -s 字幕ファイルのパス -c 設定ファイルのパス -o 画像出力先ディレクトリ
 ```
 
 #### 例01
@@ -107,7 +124,7 @@ sh ./create-subtitle-image-by-gimp.sh -s 字幕ファイルのパス -c 設定�
 この字幕ファイルから字幕画像を生成するには、以下を実行します。
 
 ```sh
-$ sh ./create-subtitle-image-by-gimp.sh -s ./sample_srt/sample.srt -c ./sample_config/single_outline.json -o sample_output/01
+sh ~/bin/create-subtitle-image-by-gimp.sh -s ./sample_srt/sample.srt -c ./sample_config/single_outline.json -o sample_output/01
 ```
 
 - 実行結果
@@ -147,7 +164,7 @@ $ sh ./create-subtitle-image-by-gimp.sh -s ./sample_srt/sample.srt -c ./sample_c
 ```
 
 ```sh
-$ sh ./create-subtitle-image-by-gimp.sh -s ./sample_srt/sample.srt -c ./sample_config/dobule_outline_with_box.json -o sample_output/02
+sh ~/bin/create-subtitle-image-by-gimp.sh -s ./sample_srt/sample.srt -c ./sample_config/dobule_outline_with_box.json -o sample_output/02
 ```
 
 - 実行結果
@@ -192,7 +209,7 @@ $ sh ./create-subtitle-image-by-gimp.sh -s ./sample_srt/sample.srt -c ./sample_c
 ```
 
 ```sh
-$ sh ./create-subtitle-image-by-gimp.sh -s ./sample_srt/sample.srt -c ./sample_config/dobule_outline_with_box_shadow.json -o sample_output/03
+sh ~/bin/create-subtitle-image-by-gimp.sh -s ./sample_srt/sample.srt -c ./sample_config/dobule_outline_with_box_shadow.json -o sample_output/03
 ```
 
 - 実行結果
