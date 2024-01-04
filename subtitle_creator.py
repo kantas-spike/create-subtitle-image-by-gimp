@@ -3,6 +3,8 @@ import my_settings
 import my_srt
 import gimpfu
 import os
+import json
+from StringIO import StringIO
 
 MAX_NUM_OF_BORDERS = 2
 
@@ -241,14 +243,36 @@ def expand_abspath(path):
     return os.path.abspath(os.path.expanduser(path))
 
 
-def run(srt_path, config_path, output_path, default_settings_path, debug=False):
+def run_with_file(
+    srt_path, config_path, output_path, default_settings_path, debug=False
+):
     print("run!!: ", srt_path, config_path, output_path)
     default_config_path = expand_abspath(default_settings_path)
     default_config = my_settings.read_config_file(default_config_path)
-    print(default_config)
     abs_config_path = expand_abspath(config_path)
     config = my_settings.read_config_file(abs_config_path)
-    print(config)
+    run(srt_path, config, output_path, default_config, debug)
+
+
+def json_to_obj(json_str):
+    io = StringIO(json_str)
+    return json.load(io)
+
+
+def run_with_json(
+    srt_path, config_json, output_path, default_settings_json, debug=False
+):
+    print("run_with_json!!: ", srt_path, config_json, output_path)
+    default_config = json_to_obj(default_settings_json)
+    config = json_to_obj(config_json)
+
+    run(srt_path, config, output_path, default_config, debug)
+
+
+def run(srt_path, config, output_path, default_config, debug=False):
+    print("run!!: ", srt_path, config, output_path)
+    print("default_config: ", default_config)
+    print("config: ", config)
     merged_config = my_settings.merge_settings(default_config, config)
     print(merged_config)
     abs_outpath = expand_abspath(output_path)
