@@ -1,21 +1,25 @@
 # -*- coding: utf-8 -*-
 import my_settings
 import my_srt
-from gimpfu import *
+import gimpfu
 import os
+import json
+from StringIO import StringIO
 
 MAX_NUM_OF_BORDERS = 2
+
+pdb = gimpfu.pdb
 
 
 def get_justyfy(name):
     if name == "left":
-        return TEXT_JUSTIFY_LEFT
+        return gimpfu.TEXT_JUSTIFY_LEFT
     elif name == "right":
-        return TEXT_JUSTIFY_RIGHT
+        return gimpfu.TEXT_JUSTIFY_RIGHT
     elif name == "center":
-        return TEXT_JUSTIFY_CENTER
+        return gimpfu.TEXT_JUSTIFY_CENTER
     else:
-        return TEXT_JUSTIFY_FILL
+        return gimpfu.TEXT_JUSTIFY_FILL
 
 
 def to_str(utf_str):
@@ -33,9 +37,9 @@ def add_text(
         0,
         text,
         0,
-        TRUE,
+        gimpfu.TRUE,
         font_size,
-        PIXELS,
+        gimpfu.PIXELS,
         font_name,
     )
     # 文字色を設定
@@ -54,15 +58,21 @@ def add_layer(image, name, color=None, opacity=100, idx=0):
     img_w = pdb.gimp_image_width(image)
     img_h = pdb.gimp_image_height(image)
     layer = pdb.gimp_layer_new(
-        image, img_w, img_h, RGBA_IMAGE, name, opacity, LAYER_MODE_NORMAL_LEGACY
+        image,
+        img_w,
+        img_h,
+        gimpfu.RGBA_IMAGE,
+        name,
+        opacity,
+        gimpfu.LAYER_MODE_NORMAL_LEGACY,
     )
     if color:
         org_color = pdb.gimp_context_get_background()
         pdb.gimp_context_set_background(color)
-        pdb.gimp_drawable_fill(layer, FILL_BACKGROUND)
+        pdb.gimp_drawable_fill(layer, gimpfu.FILL_BACKGROUND)
         pdb.gimp_context_set_background(org_color)
     else:
-        pdb.gimp_drawable_fill(layer, TRANSPARENT_FILL)
+        pdb.gimp_drawable_fill(layer, gimpfu.TRANSPARENT_FILL)
 
     # レイヤーを画像に追加
     pdb.gimp_image_add_layer(image, layer, idx)
@@ -75,7 +85,7 @@ def add_outline(image, target_layer, i, font_size, border_setting):
     # ターゲットの下にレイヤーを配置
     pdb.gimp_image_add_layer(image, outline_layer, i + 1)
     # レイヤー内の画像のアウトラインを選択
-    pdb.gimp_image_select_item(image, CHANNEL_OP_ADD, outline_layer)
+    pdb.gimp_image_select_item(image, gimpfu.CHANNEL_OP_ADD, outline_layer)
     # 選択範囲を拡大
     pdb.gimp_selection_grow(image, font_size * border_setting["rate"])
     if border_setting["feather"] > 0:
@@ -85,7 +95,7 @@ def add_outline(image, target_layer, i, font_size, border_setting):
     # 背景色を白に
     org_bg = pdb.gimp_context_get_background()
     pdb.gimp_context_set_background(to_str(border_setting["color"]))
-    pdb.gimp_drawable_edit_fill(outline_layer, FILL_BACKGROUND)
+    pdb.gimp_drawable_edit_fill(outline_layer, gimpfu.FILL_BACKGROUND)
     # 選択を解除
     pdb.gimp_selection_none(image)
     # 背景色を元にもどす
@@ -94,7 +104,7 @@ def add_outline(image, target_layer, i, font_size, border_setting):
 
 def get_text_area(image, layer):
     # # 可視領域を選択
-    pdb.gimp_image_select_item(image, CHANNEL_OP_ADD, layer)
+    pdb.gimp_image_select_item(image, gimpfu.CHANNEL_OP_ADD, layer)
     # 選択範囲が無い場合終了
     (non_empty, x1, y1, x2, y2) = pdb.gimp_selection_bounds(image)
     pdb.gimp_selection_none(image)
@@ -110,7 +120,7 @@ def generate_subtitles(subtitles, settings, output_dir, debug=False):
         print(st["no"])
         print("\n".join(st["lines"]))
         # imageの生成
-        image = pdb.gimp_image_new(10, 10, RGB)
+        image = pdb.gimp_image_new(10, 10, gimpfu.RGB)
         tmp_layer = add_layer(image, "字幕")
         text_setting = settings["style"]["text"]
         font_size = text_setting["size"]
@@ -193,7 +203,9 @@ def generate_subtitles(subtitles, settings, output_dir, debug=False):
 
         if not debug:
             # 可視レイヤーを1つに統合
-            merged_layer = pdb.gimp_image_merge_visible_layers(image, CLIP_TO_IMAGE)
+            merged_layer = pdb.gimp_image_merge_visible_layers(
+                image, gimpfu.CLIP_TO_IMAGE
+            )
             merged_layer.name = "字幕 統合版"
 
             # crop
@@ -231,14 +243,36 @@ def expand_abspath(path):
     return os.path.abspath(os.path.expanduser(path))
 
 
-def run(srt_path, config_path, output_path, default_settings_path, debug=False):
+def run_with_file(
+    srt_path, config_path, output_path, default_settings_path, debug=False
+):
     print("run!!: ", srt_path, config_path, output_path)
     default_config_path = expand_abspath(default_settings_path)
     default_config = my_settings.read_config_file(default_config_path)
-    print(default_config)
     abs_config_path = expand_abspath(config_path)
     config = my_settings.read_config_file(abs_config_path)
-    print(config)
+    run(srt_path, config, output_path, default_config, debug)
+
+
+def json_to_obj(json_str):
+    io = StringIO(json_str)
+    return json.load(io)
+
+
+def run_with_json(
+    srt_path, config_json, output_path, default_settings_json, debug=False
+):
+    print("run_with_json!!: ", srt_path, config_json, output_path)
+    default_config = json_to_obj(default_settings_json)
+    config = json_to_obj(config_json)
+
+    run(srt_path, config, output_path, default_config, debug)
+
+
+def run(srt_path, config, output_path, default_config, debug=False):
+    print("run!!: ", srt_path, config, output_path)
+    print("default_config: ", default_config)
+    print("config: ", config)
     merged_config = my_settings.merge_settings(default_config, config)
     print(merged_config)
     abs_outpath = expand_abspath(output_path)
