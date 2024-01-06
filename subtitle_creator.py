@@ -255,7 +255,8 @@ def run_with_file(
     default_config = my_settings.read_config_file(default_config_path)
     abs_config_path = expand_abspath(config_path)
     config = my_settings.read_config_file(abs_config_path)
-    run(srt_path, config, output_path, default_config, debug)
+    subtitles = my_srt.read_srt_file(expand_abspath(srt_path))
+    run(subtitles, config, output_path, default_config, debug)
 
 
 def json_to_obj(json_str):
@@ -264,17 +265,17 @@ def json_to_obj(json_str):
 
 
 def run_with_json(
-    srt_path, config_json, output_path, default_settings_json, debug=False
+    subtitles_json, config_json, output_path, default_settings_json, debug=False
 ):
-    print("run_with_json!!: ", srt_path, config_json, output_path)
+    print("run_with_json!!: ", subtitles_json, config_json, output_path)
     default_config = json_to_obj(default_settings_json)
     config = json_to_obj(config_json)
+    subtitles = json_to_obj(subtitles_json)
+    run(subtitles, config, output_path, default_config, debug)
 
-    run(srt_path, config, output_path, default_config, debug)
 
-
-def run(srt_path, config, output_path, default_config, debug=False):
-    print("run!!: ", srt_path, config, output_path)
+def run(subtitles, config, output_path, default_config, debug=False):
+    print("run!!: ", subtitles, output_path)
     print("default_config: ", default_config)
     print("config: ", config)
     merged_config = my_settings.merge_settings(default_config, config)
@@ -282,7 +283,6 @@ def run(srt_path, config, output_path, default_config, debug=False):
     abs_outpath = expand_abspath(output_path)
     if not os.path.exists(abs_outpath):
         os.makedirs(abs_outpath)
-    subtitles = my_srt.read_srt_file(expand_abspath(srt_path))
     generate_subtitles(subtitles, merged_config, abs_outpath, debug)
     # gimp終了
     if not debug:
