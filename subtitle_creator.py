@@ -116,9 +116,13 @@ def get_text_area(image, layer):
 
 
 def generate_subtitles(subtitles, settings, output_dir, debug=False):
+    org_settings = settings
     for st in subtitles:
         print(st["no"])
         print("\n".join(st["lines"]))
+        # 字幕個別の設定あり
+        if st["json"]:
+            settings = my_settings.merge_settings(org_settings, st["json"])
         # imageの生成
         image = pdb.gimp_image_new(10, 10, gimpfu.RGB)
         tmp_layer = add_layer(image, "字幕")
