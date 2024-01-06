@@ -4,8 +4,6 @@ import json
 import os
 import re
 from io import open
-import json
-from StringIO import StringIO
 
 
 def time_to_delta(t):
@@ -40,8 +38,6 @@ def read_srt_file(path):
                 if "-->" not in line:
                     raise ValueError("Bad time format:{}".format(item))
                 item["time_info"] = parse_line_of_time(line)
-                if "JSON:" in line:
-                    item["json"] = parse_line_of_json(line)
             elif len(item) == 2:
                 item["lines"] = []
                 item["lines"].append(line)
@@ -52,15 +48,6 @@ def read_srt_file(path):
             item_list.append(item)
 
     return item_list
-
-
-def parse_line_of_json(line):
-    m = re.match(r"JSON: *(\{.*\})\Z", line)
-    if m:
-        io = StringIO(m.group(1))
-        return json.load(io)
-    else:
-        raise SyntaxError(f"JSONデータがありません: {line}")
 
 
 def parse_line_of_time(line):
