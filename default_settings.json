@@ -1,6 +1,6 @@
 {
   "with_shadow": true,
-  "with_borders": 2,
+  "number_of_borders": 2,
   "with_box": true,
   "crop_area": { "padding_x": 20, "padding_y": 20 },
   "canvas": { "padding_x_rate": 1.0, "padding_y_rate": 1.0 },
@@ -10,7 +10,7 @@
       "size": 48,
       "color": "#40516a",
       "line_space_rate": -0.3,
-      "justification": "center"
+      "align": "center"
     },
     "borders": [
       { "color": "#FFFFFF", "rate": 0.08, "feather": 0 },
