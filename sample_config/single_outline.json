@@ -1,6 +1,6 @@
 {
   "with_shadow": false,
-  "with_borders": 1,
+  "number_of_borders": 1,
   "with_box": false,
   "style": {
     "text": {

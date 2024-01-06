@@ -106,7 +106,7 @@ sh ~/bin/create-subtitle-image-by-gimp.sh -s 字幕ファイルのパス -c 設�
 ```json
 {
   "with_shadow": false,
-  "with_borders": 1,
+  "number_of_borders": 1,
   "with_box": false,
   "style": {
     "text": {
@@ -142,7 +142,7 @@ sh ~/bin/create-subtitle-image-by-gimp.sh -s ./sample_srt/sample.srt -c ./sample
 ```json
 {
   "with_shadow": false,
-  "with_borders": 2,
+  "number_of_borders": 2,
   "with_box": true,
   "style": {
     "text": {
@@ -182,7 +182,7 @@ sh ~/bin/create-subtitle-image-by-gimp.sh -s ./sample_srt/sample.srt -c ./sample
 ```json
 {
   "with_shadow": true,
-  "with_borders": 2,
+  "number_of_borders": 2,
   "with_box": true,
   "style": {
     "text": {
@@ -225,14 +225,14 @@ sh ~/bin/create-subtitle-image-by-gimp.sh -s ./sample_srt/sample.srt -c ./sample
 設定ファイルには以下の項目を指定できます。
 設定ファイルで未指定の項目はデフォルト値が採用されます。
 
-| 設定項目       | デフォルト値 | 説明                                                          |
-| -------------- | ------------ | ------------------------------------------------------------- |
-| "with_shadow"  | false        | 影付きの字幕画像を作成する                                    |
-| "with_borders" | 2            | 縁取り数を指定する。0の場合は縁取らない。最大2まで指定可能    |
-| "with_box"     | false        | 字幕画像に背景色をつける                                      |
-| "crop_area"    | 別掲         | 字幕画像のパディング設定                                      |
-| "canvas"       | 別掲         | 内部で使用するキャンバスのパディング設定 (通常変更の必要なし) |
-| "style"        | 別掲         | 文字、縁取り、影付け、背景色のスタイル設定                    |
+| 設定項目            | デフォルト値 | 説明                                                          |
+| ------------------- | ------------ | ------------------------------------------------------------- |
+| "with_shadow"       | false        | 影付きの字幕画像を作成する                                    |
+| "number_of_borders" | 2            | 縁取り数を指定する。0の場合は縁取らない。最大2まで指定可能    |
+| "with_box"          | false        | 字幕画像に背景色をつける                                      |
+| "crop_area"         | 別掲         | 字幕画像のパディング設定                                      |
+| "canvas"            | 別掲         | 内部で使用するキャンバスのパディング設定 (通常変更の必要なし) |
+| "style"             | 別掲         | 文字、縁取り、影付け、背景色のスタイル設定                    |
 
 ### crop_area(字幕画像のパディング)設定
 
@@ -266,7 +266,7 @@ sh ~/bin/create-subtitle-image-by-gimp.sh -s ./sample_srt/sample.srt -c ./sample
 | "font_family"     | "Noto Sans JP Bold" | フォントファミリー               |
 | "size"            | 48                  | フォントサイズ (単位: px)        |
 | "color"           | "#40516a"           | 文字の前景色                     |
-| "justification"   | "center"            | 文字揃え(left,right,center,fill) |
+| "align"           | "center"            | 文字揃え(left,right,center,fill) |
 | "line_space_rate" | -0.3                | 行間 (単位:文字サイズの比率)     |
 
 #### borders設定
@@ -285,14 +285,14 @@ sh ~/bin/create-subtitle-image-by-gimp.sh -s ./sample_srt/sample.srt -c ./sample
 
 "rate"に`0.08`指定すると、幅が`文字サイズ * 0.08`の縁取りが作成される。
 
-#### shadoe設定
+#### shadow設定
 
 | shadow内設定項目 | デフォルト値 | 説明                          |
 | ---------------- | ------------ | ----------------------------- |
 | "color"          | "#000000"    | 影の色                        |
 | "offset_x"       | 10           | 影の水平オフセット (単位: px) |
 | "offset_y"       | 10           | 影の垂直オフセット (単位: px) |
-| "blur_radius"    | "center"     | 影のぼかし半径 (単位: px)     |
+| "blur_radius"    | 15           | 影のぼかし半径 (単位: px)     |
 | "opacity"        | 0.5          | 影の色の不透明度 (0〜1.0)     |
 
 #### box設定
@@ -309,7 +309,7 @@ sh ~/bin/create-subtitle-image-by-gimp.sh -s ./sample_srt/sample.srt -c ./sample
 ```json
 {
   "with_shadow": true,
-  "with_borders": 2,
+  "number_of_borders": 2,
   "with_box": true,
   "crop_area": { "padding_x": 20, "padding_y": 20 },
   "canvas": { "padding_x_rate": 1.0, "padding_y_rate": 1.0 },
@@ -318,7 +318,7 @@ sh ~/bin/create-subtitle-image-by-gimp.sh -s ./sample_srt/sample.srt -c ./sample
       "font_family": "Noto Sans JP Bold",
       "size": 48,
       "color": "#40516a",
-      "justification": "center"
+      "align": "center"
     },
     "borders": [
       { "color": "#FFFFFF", "rate": 0.08, "feather": 0 },
